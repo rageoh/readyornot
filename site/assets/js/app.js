@@ -25,6 +25,10 @@
   const nav = document.getElementById("nav");
   const anchorLinks = document.querySelectorAll('a[href^="#"]');
 
+  // New options controls
+  const expandModeCheckbox = document.getElementById("expandMode");
+  const includeEquipmentCheckbox = document.getElementById("includeEquipment");
+
   /** Utils */
   function createElement(tagName, className, attributes) {
     const element = document.createElement(tagName);
@@ -54,6 +58,79 @@
   function computeWeeklyQuantity(dailyUnits) {
     const multiplier = 7 * getBufferMultiplier();
     return Math.ceil(dailyUnits * multiplier);
+  }
+
+  /**
+   * Simple recipe and equipment knowledge base
+   * Units are per ONE product sold (daily units multiplier will be applied)
+   */
+  const recipes = {
+    // Example burger decomposition
+    burger: {
+      ingredients: {
+        "Burger buns": 1,
+        "Beef patties": 1,
+        "Cheese slices": 1,
+        "Lettuce heads": 0.15,
+        "Tomatoes": 0.2,
+        "Onions": 0.1,
+        "Pickle slices": 2,
+        "Sauce (oz)": 1
+      },
+      equipment: {
+        "Grill or griddle (units)": 0.003, // rough: 1 grill per ~300 burgers/day
+        "Food prep gloves (boxes)": 0.01
+      }
+    },
+    burgers: { alias: "burger" },
+
+    soda: {
+      ingredients: { "Soda cans": 1 },
+      equipment: { "Ice (lbs)": 0.05 }
+    },
+    sodas: { alias: "soda" },
+
+    bun: { ingredients: { "Burger buns": 1 } },
+    buns: { alias: "bun" }
+  };
+
+  function resolveRecipeKey(name) {
+    const key = String(name).toLowerCase().trim();
+    if (recipes[key]?.alias) return recipes[recipes[key].alias] ? recipes[key].alias : key;
+    return recipes[key] ? key : null;
+  }
+
+  function expandProductsToComponents(items, includeEquipment) {
+    const componentTotals = new Map(); // name -> total DAILY units
+
+    function addToTotals(componentName, addedDailyUnits) {
+      const current = componentTotals.get(componentName) || 0;
+      componentTotals.set(componentName, current + addedDailyUnits);
+    }
+
+    for (const { itemName, dailyUnits } of items) {
+      const recipeKey = resolveRecipeKey(itemName);
+      if (recipeKey) {
+        const recipe = recipes[recipeKey];
+        const baseKey = recipe.alias ? recipe.alias : recipeKey;
+        const resolved = recipes[baseKey];
+        if (resolved?.ingredients) {
+          for (const [component, perUnit] of Object.entries(resolved.ingredients)) {
+            addToTotals(component, dailyUnits * Number(perUnit));
+          }
+        }
+        if (includeEquipment && resolved?.equipment) {
+          for (const [equip, perUnit] of Object.entries(resolved.equipment)) {
+            addToTotals(equip, dailyUnits * Number(perUnit));
+          }
+        }
+      } else {
+        addToTotals(itemName, dailyUnits);
+      }
+    }
+
+    // Convert back to array
+    return Array.from(componentTotals.entries()).map(([itemName, dailyUnits]) => ({ itemName, dailyUnits }));
   }
 
   /** Items list */
@@ -180,7 +257,14 @@
     });
 
     generateButton.addEventListener("click", () => {
-      const items = readItemsFromUI();
+      const baseItems = readItemsFromUI();
+      const shouldExpand = !!expandModeCheckbox?.checked;
+      const shouldIncludeEquipment = !!includeEquipmentCheckbox?.checked;
+
+      const items = shouldExpand
+        ? expandProductsToComponents(baseItems, shouldIncludeEquipment)
+        : baseItems;
+
       const text = generateListText(items);
       outputPre.textContent = text || "";
       // Scroll to output
