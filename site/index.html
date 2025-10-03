@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Smart Business Assistant — Shopping List Generator</title>
+    <meta name="description" content="Turn revenue and daily sales into a weekly shopping list with a 10% buffer." />
+    <link rel="stylesheet" href="./assets/css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script defer src="./assets/js/app.js"></script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="container header-inner">
+        <div class="brand" aria-label="Smart Business Assistant">
+          <span class="brand-badge">SB</span>
+          <span>Smart Business Assistant</span>
+        </div>
+        <nav class="nav" id="nav" aria-label="Main">
+          <a href="#generator">Generator</a>
+          <a href="#how">How it works</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+          ☰
+        </button>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <h1>Generate a weekly shopping list from your sales numbers</h1>
+        <p>Paste your sales or add items below. Output is only list lines with quantities and ~10% buffer.</p>
+      </section>
+
+      <section id="generator" class="card">
+        <div class="card-inner">
+          <div class="form-grid">
+            <div class="left">
+              <div class="field">
+                <label class="label" for="businessType">Business type</label>
+                <input id="businessType" class="input" type="text" placeholder="e.g., Restaurant" />
+              </div>
+
+              <div class="field">
+                <label class="label" for="weeklyRevenue">Weekly revenue (optional)</label>
+                <input id="weeklyRevenue" class="input" type="number" inputmode="numeric" placeholder="e.g., 3000" />
+                <div class="help">Used for context only. Quantities are based on daily sales.</div>
+              </div>
+
+              <div class="field">
+                <label class="label" for="bufferPercent">Buffer (~10%)</label>
+                <input id="bufferPercent" class="input" type="range" min="0" max="30" step="1" value="10" />
+                <div class="help">Current buffer: <strong id="bufferPercentValue">10%</strong></div>
+              </div>
+
+              <div class="field">
+                <label class="label" for="bulkInput">Average daily sales (paste comma‑separated)</label>
+                <textarea id="bulkInput" class="textarea" placeholder="Example: 200 burgers, 100 buns, 50 sodas"></textarea>
+                <div class="actions">
+                  <button class="button secondary" id="parseBulkButton" type="button">Parse input</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="right">
+              <div class="field">
+                <label class="label">Average daily sales (structured)</label>
+                <div id="itemsContainer" class="field" aria-live="polite"></div>
+                <div class="actions">
+                  <button class="button" id="addItemButton" type="button">Add item</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions" style="margin-top: 14px">
+            <button class="button" id="generateButton" type="button">Generate list</button>
+            <button class="button ghost" id="copyButton" type="button">Copy list</button>
+            <button class="button ghost" id="downloadButton" type="button">Download .txt</button>
+            <button class="button secondary" id="resetButton" type="button">Reset</button>
+          </div>
+
+          <div class="output">
+            <div class="label">Output (list only)</div>
+            <pre id="outputText" aria-live="polite"></pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="how" class="hero">
+        <h2>How it works</h2>
+        <p class="help">We multiply each item's average daily units by 7 and add your buffer (default 10%). We round up so you don't run out. The output shows only "- Item: Quantity" lines for easy copy-paste.</p>
+      </section>
+
+      <section id="faq" class="hero">
+        <h2>FAQ</h2>
+        <p class="help"><strong>Do I have to enter revenue?</strong> No. It's optional and informational.</p>
+        <p class="help"><strong>Can I paste sales?</strong> Yes. Use the comma‑separated format from the example.</p>
+      </section>
+
+      <div class="footer">Built for you with ❤️ — Smart Business Assistant</div>
+    </main>
+  </body>
+</html>
