@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Contact — Smart Business Assistant</title>
+    <link rel="stylesheet" href="./assets/css/style.css" />
+    <script defer src="./assets/js/app.js"></script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="container header-inner">
+        <div class="brand"><span class="brand-badge">SB</span><span>Smart Business Assistant</span></div>
+        <nav class="nav" id="nav" aria-label="Main">
+          <a href="./index.html#generator">Generator</a>
+          <a href="./index.html#how">How</a>
+          <a href="./index.html#faq">FAQ</a>
+        </nav>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">☰</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <h1>Contact</h1>
+        <p class="help">Have feedback? Send us a note.</p>
+      </section>
+
+      <section class="card">
+        <div class="card-inner">
+          <form id="contactForm" class="field" novalidate>
+            <div class="field">
+              <label class="label" for="name">Name</label>
+              <input id="name" class="input" type="text" required placeholder="Your name" />
+            </div>
+            <div class="field">
+              <label class="label" for="email">Email</label>
+              <input id="email" class="input" type="email" required placeholder="you@example.com" />
+            </div>
+            <div class="field">
+              <label class="label" for="message">Message</label>
+              <textarea id="message" class="textarea" required placeholder="Your message"></textarea>
+            </div>
+            <div class="actions">
+              <button class="button" type="submit">Send</button>
+            </div>
+            <div id="contactResult" class="help"></div>
+          </form>
+        </div>
+      </section>
+
+      <div class="footer">Built for you with ❤️ — Smart Business Assistant</div>
+    </main>
+
+    <script>
+      (function(){
+        const form = document.getElementById('contactForm');
+        const result = document.getElementById('contactResult');
+        form.addEventListener('submit', function(e){
+          e.preventDefault();
+          const name = document.getElementById('name').value.trim();
+          const email = document.getElementById('email').value.trim();
+          const message = document.getElementById('message').value.trim();
+          if(!name || !email || !message){
+            result.textContent = 'Please fill in all fields.';
+            return;
+          }
+          result.textContent = 'Thanks! This demo form does not send emails.';
+        });
+      })();
+    </script>
+  </body>
+</html>
